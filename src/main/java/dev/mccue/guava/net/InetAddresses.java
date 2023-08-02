@@ -34,14 +34,14 @@ import java.util.Locale;
 import dev.mccue.jsr305.CheckForNull;
 
 /**
- * Static utility methods pertaining to {@link InetAddress} instances.
+ * Static utility methods pertaining to {@code InetAddress} instances.
  *
  * <p><b>Important note:</b> Unlike {@code InetAddress.getByName()}, the methods of this class never
  * cause DNS services to be accessed. For this reason, you should prefer these methods as much as
  * possible over their JDK equivalents whenever you are expecting to handle only IP address string
  * literals -- there is no blocking DNS penalty for a malformed string.
  *
- * <p>When dealing with {@link Inet4Address} and {@link Inet6Address} objects as byte arrays (vis.
+ * <p>When dealing with {@code Inet4Address} and {@code Inet6Address} objects as byte arrays (vis.
  * {@code InetAddress.getAddress()}) they are 4 and 16 bytes in length, respectively, and represent
  * the address in network byte order.
  *
@@ -71,7 +71,7 @@ import dev.mccue.jsr305.CheckForNull;
  * <p>Technically one <i>can</i> create a 128bit IPv6 address with the wire format of a "mapped"
  * address, as shown above, and transmit it in an IPv6 packet header. However, Java's InetAddress
  * creation methods appear to adhere doggedly to the original intent of the "mapped" address: all
- * "mapped" addresses return {@link Inet4Address} objects.
+ * "mapped" addresses return {@code Inet4Address} objects.
  *
  * <p>For added safety, it is common for IPv6 network operators to filter all packets where either
  * the source or destination address appears to be a "compat" or "mapped" address. Filtering
@@ -108,11 +108,11 @@ public final class InetAddresses {
   private InetAddresses() {}
 
   /**
-   * Returns an {@link Inet4Address}, given a byte array representation of the IPv4 address.
+   * Returns an {@code Inet4Address}, given a byte array representation of the IPv4 address.
    *
    * @param bytes byte array representing an IPv4 address (should be of length 4)
-   * @return {@link Inet4Address} corresponding to the supplied byte array
-   * @throws IllegalArgumentException if a valid {@link Inet4Address} can not be created
+   * @return {@code Inet4Address} corresponding to the supplied byte array
+   * @throws IllegalArgumentException if a valid {@code Inet4Address} can not be created
    */
   private static Inet4Address getInet4Address(byte[] bytes) {
     checkArgument(
@@ -125,20 +125,20 @@ public final class InetAddresses {
   }
 
   /**
-   * Returns the {@link InetAddress} having the given string representation.
+   * Returns the {@code InetAddress} having the given string representation.
    *
    * <p>This deliberately avoids all nameservice lookups (e.g. no DNS).
    *
    * <p>Anything after a {@code %} in an IPv6 address is ignored (assumed to be a Scope ID).
    *
    * <p>This method accepts non-ASCII digits, for example {@code "１９２.１６８.０.１"} (those are fullwidth
-   * characters). That is consistent with {@link InetAddress}, but not with various RFCs. If you
+   * characters). That is consistent with {@code InetAddress}, but not with various RFCs. If you
    * want to accept ASCII digits only, you can use something like {@code
    * CharMatcher.ascii().matchesAllOf(ipString)}.
    *
    * @param ipString {@code String} containing an IPv4 or IPv6 string literal, e.g. {@code
    *     "192.168.0.1"} or {@code "2001:db8::1"}
-   * @return {@link InetAddress} representing the argument
+   * @return {@code InetAddress} representing the argument
    * @throws IllegalArgumentException if the argument is not a valid IP string literal
    */
   @CanIgnoreReturnValue // TODO(b/219820829): consider removing
@@ -158,7 +158,7 @@ public final class InetAddresses {
    * otherwise.
    *
    * <p>This method accepts non-ASCII digits, for example {@code "１９２.１６８.０.１"} (those are fullwidth
-   * characters). That is consistent with {@link InetAddress}, but not with various RFCs. If you
+   * characters). That is consistent with {@code InetAddress}, but not with various RFCs. If you
    * want to accept ASCII digits only, you can use something like {@code
    * CharMatcher.ascii().matchesAllOf(ipString)}.
    *
@@ -371,7 +371,7 @@ public final class InetAddresses {
   /**
    * Convert a byte array into an InetAddress.
    *
-   * <p>{@link InetAddress#getByAddress} is documented as throwing a checked exception "if IP
+   * <p>{@code InetAddress#getByAddress} is documented as throwing a checked exception "if IP
    * address is of illegal length." We replace it with an unchecked exception, for use by callers
    * who already know that addr is an array of length 4 or 16.
    *
@@ -387,9 +387,9 @@ public final class InetAddresses {
   }
 
   /**
-   * Returns the string representation of an {@link InetAddress}.
+   * Returns the string representation of an {@code InetAddress}.
    *
-   * <p>For IPv4 addresses, this is identical to {@link InetAddress#getHostAddress()}, but for IPv6
+   * <p>For IPv4 addresses, this is identical to {@code InetAddress#getHostAddress()}, but for IPv6
    * addresses, the output follows <a href="http://tools.ietf.org/html/rfc5952">RFC 5952</a> section
    * 4. The main difference is that this method uses "::" for zero compression, while Java's version
    * uses the uncompressed form.
@@ -397,7 +397,7 @@ public final class InetAddresses {
    * <p>This method uses hexadecimal for all IPv6 addresses, including IPv4-mapped IPv6 addresses
    * such as "::c000:201". The output does not include a Scope ID.
    *
-   * @param ip {@link InetAddress} to be converted to an address string
+   * @param ip {@code InetAddress} to be converted to an address string
    * @return {@code String} containing the text-formatted IP address
    * @since 10.0
    */
@@ -481,9 +481,9 @@ public final class InetAddresses {
   }
 
   /**
-   * Returns the string representation of an {@link InetAddress} suitable for inclusion in a URI.
+   * Returns the string representation of an {@code InetAddress} suitable for inclusion in a URI.
    *
-   * <p>For IPv4 addresses, this is identical to {@link InetAddress#getHostAddress()}, but for IPv6
+   * <p>For IPv4 addresses, this is identical to {@code InetAddress#getHostAddress()}, but for IPv6
    * addresses it compresses zeroes and surrounds the text with square brackets; for example {@code
    * "[2001:db8::1]"}.
    *
@@ -491,12 +491,12 @@ public final class InetAddresses {
    * href="http://tools.ietf.org/html/rfc3986#section-3.2.2">RFC 3986</a>, a URI containing an IPv6
    * string literal is of the form {@code "http://[2001:db8::1]:8888/index.html"}.
    *
-   * <p>Use of either {@link InetAddresses#toAddrString}, {@link InetAddress#getHostAddress()}, or
-   * this method is recommended over {@link InetAddress#toString()} when an IP address string
-   * literal is desired. This is because {@link InetAddress#toString()} prints the hostname and the
+   * <p>Use of either {@code InetAddresses#toAddrString}, {@code InetAddress#getHostAddress()}, or
+   * this method is recommended over {@code InetAddress#toString()} when an IP address string
+   * literal is desired. This is because {@code InetAddress#toString()} prints the hostname and the
    * IP address string joined by a "/".
    *
-   * @param ip {@link InetAddress} to be converted to URI string literal
+   * @param ip {@code InetAddress} to be converted to URI string literal
    * @return {@code String} containing URI-safe string literal
    */
   public static String toUriString(InetAddress ip) {
@@ -510,13 +510,13 @@ public final class InetAddresses {
    * Returns an InetAddress representing the literal IPv4 or IPv6 host portion of a URL, encoded in
    * the format specified by RFC 3986 section 3.2.2.
    *
-   * <p>This method is similar to {@link InetAddresses#forString(String)}, however, it requires that
+   * <p>This method is similar to {@code InetAddresses#forString(String)}, however, it requires that
    * IPv6 addresses are surrounded by square brackets.
    *
-   * <p>This method is the inverse of {@link InetAddresses#toUriString(InetAddress)}.
+   * <p>This method is the inverse of {@code InetAddresses#toUriString(java.net.InetAddress)}.
    *
    * <p>This method accepts non-ASCII digits, for example {@code "１９２.１６８.０.１"} (those are fullwidth
-   * characters). That is consistent with {@link InetAddress}, but not with various RFCs. If you
+   * characters). That is consistent with {@code InetAddress}, but not with various RFCs. If you
    * want to accept ASCII digits only, you can use something like {@code
    * CharMatcher.ascii().matchesAllOf(ipString)}.
    *
@@ -563,7 +563,7 @@ public final class InetAddresses {
    * otherwise.
    *
    * <p>This method accepts non-ASCII digits, for example {@code "１９２.１６８.０.１"} (those are fullwidth
-   * characters). That is consistent with {@link InetAddress}, but not with various RFCs. If you
+   * characters). That is consistent with {@code InetAddress}, but not with various RFCs. If you
    * want to accept ASCII digits only, you can use something like {@code
    * CharMatcher.ascii().matchesAllOf(ipString)}.
    *
@@ -585,11 +585,11 @@ public final class InetAddresses {
    * <p>For more on IPv4 compatible addresses see section 2.5.5.1 of <a target="_parent"
    * href="http://tools.ietf.org/html/rfc4291#section-2.5.5.1">RFC 4291</a>.
    *
-   * <p>NOTE: This method is different from {@link Inet6Address#isIPv4CompatibleAddress} in that it
+   * <p>NOTE: This method is different from {@code Inet6Address#isIPv4CompatibleAddress} in that it
    * more correctly classifies {@code "::"} and {@code "::1"} as proper IPv6 addresses (which they
    * are), NOT IPv4 compatible addresses (which they are generally NOT considered to be).
    *
-   * @param ip {@link Inet6Address} to be examined for embedded IPv4 compatible address format
+   * @param ip {@code Inet6Address} to be examined for embedded IPv4 compatible address format
    * @return {@code true} if the argument is a valid "compat" address
    */
   public static boolean isCompatIPv4Address(Inet6Address ip) {
@@ -611,8 +611,8 @@ public final class InetAddresses {
   /**
    * Returns the IPv4 address embedded in an IPv4 compatible address.
    *
-   * @param ip {@link Inet6Address} to be examined for an embedded IPv4 address
-   * @return {@link Inet4Address} of the embedded IPv4 address
+   * @param ip {@code Inet6Address} to be examined for an embedded IPv4 address
+   * @return {@code Inet4Address} of the embedded IPv4 address
    * @throws IllegalArgumentException if the argument is not a valid IPv4 compatible address
    */
   public static Inet4Address getCompatIPv4Address(Inet6Address ip) {
@@ -631,7 +631,7 @@ public final class InetAddresses {
    * <p>For more on 6to4 addresses see section 2 of <a target="_parent"
    * href="http://tools.ietf.org/html/rfc3056#section-2">RFC 3056</a>.
    *
-   * @param ip {@link Inet6Address} to be examined for 6to4 address format
+   * @param ip {@code Inet6Address} to be examined for 6to4 address format
    * @return {@code true} if the argument is a 6to4 address
    */
   public static boolean is6to4Address(Inet6Address ip) {
@@ -642,8 +642,8 @@ public final class InetAddresses {
   /**
    * Returns the IPv4 address embedded in a 6to4 address.
    *
-   * @param ip {@link Inet6Address} to be examined for embedded IPv4 in 6to4 address
-   * @return {@link Inet4Address} of embedded IPv4 in 6to4 address
+   * @param ip {@code Inet6Address} to be examined for embedded IPv4 in 6to4 address
+   * @return {@code Inet4Address} of embedded IPv4 in 6to4 address
    * @throws IllegalArgumentException if the argument is not a valid IPv6 6to4 address
    */
   public static Inet4Address get6to4IPv4Address(Inet6Address ip) {
@@ -718,7 +718,7 @@ public final class InetAddresses {
    *
    * <p>Teredo addresses begin with the {@code "2001::/32"} prefix.
    *
-   * @param ip {@link Inet6Address} to be examined for Teredo address format
+   * @param ip {@code Inet6Address} to be examined for Teredo address format
    * @return {@code true} if the argument is a Teredo address
    */
   public static boolean isTeredoAddress(Inet6Address ip) {
@@ -732,7 +732,7 @@ public final class InetAddresses {
   /**
    * Returns the Teredo information embedded in a Teredo address.
    *
-   * @param ip {@link Inet6Address} to be examined for embedded Teredo information
+   * @param ip {@code Inet6Address} to be examined for embedded Teredo information
    * @return extracted {@code TeredoInfo}
    * @throws IllegalArgumentException if the argument is not a valid IPv6 Teredo address
    */
@@ -767,7 +767,7 @@ public final class InetAddresses {
    * <p>For more on ISATAP addresses see section 6.1 of <a target="_parent"
    * href="http://tools.ietf.org/html/rfc5214#section-6.1">RFC 5214</a>.
    *
-   * @param ip {@link Inet6Address} to be examined for ISATAP address format
+   * @param ip {@code Inet6Address} to be examined for ISATAP address format
    * @return {@code true} if the argument is an ISATAP address
    */
   public static boolean isIsatapAddress(Inet6Address ip) {
@@ -793,8 +793,8 @@ public final class InetAddresses {
   /**
    * Returns the IPv4 address embedded in an ISATAP address.
    *
-   * @param ip {@link Inet6Address} to be examined for embedded IPv4 in ISATAP address
-   * @return {@link Inet4Address} of embedded IPv4 in an ISATAP address
+   * @param ip {@code Inet6Address} to be examined for embedded IPv4 in ISATAP address
+   * @return {@code Inet4Address} of embedded IPv4 in an ISATAP address
    * @throws IllegalArgumentException if the argument is not a valid IPv6 ISATAP address
    */
   public static Inet4Address getIsatapIPv4Address(Inet6Address ip) {
@@ -811,7 +811,7 @@ public final class InetAddresses {
    * spoofability. With other transition addresses spoofing involves (at least) infection of one's
    * BGP routing table.
    *
-   * @param ip {@link Inet6Address} to be examined for embedded IPv4 client address
+   * @param ip {@code Inet6Address} to be examined for embedded IPv4 client address
    * @return {@code true} if there is an embedded IPv4 client address
    * @since 7.0
    */
@@ -827,8 +827,8 @@ public final class InetAddresses {
    * spoofability. With other transition addresses spoofing involves (at least) infection of one's
    * BGP routing table.
    *
-   * @param ip {@link Inet6Address} to be examined for embedded IPv4 client address
-   * @return {@link Inet4Address} of embedded IPv4 client address
+   * @param ip {@code Inet6Address} to be examined for embedded IPv4 client address
+   * @return {@code Inet4Address} of embedded IPv4 client address
    * @throws IllegalArgumentException if the argument does not have a valid embedded IPv4 address
    */
   public static Inet4Address getEmbeddedIPv4ClientAddress(Inet6Address ip) {
@@ -856,12 +856,12 @@ public final class InetAddresses {
    * <p>For more on IPv4 mapped addresses see section 2.5.5.2 of <a target="_parent"
    * href="http://tools.ietf.org/html/rfc4291#section-2.5.5.2">RFC 4291</a>.
    *
-   * <p>Note: This method takes a {@code String} argument because {@link InetAddress} automatically
+   * <p>Note: This method takes a {@code String} argument because {@code InetAddress} automatically
    * collapses mapped addresses to IPv4. (It is actually possible to avoid this using one of the
-   * obscure {@link Inet6Address} methods, but it would be unwise to depend on such a
+   * obscure {@code Inet6Address} methods, but it would be unwise to depend on such a
    * poorly-documented feature.)
    *
-   * <p>This method accepts non-ASCII digits. That is consistent with {@link InetAddress}, but not
+   * <p>This method accepts non-ASCII digits. That is consistent with {@code InetAddress}, but not
    * with various RFCs. If you want to accept ASCII digits only, you can use something like {@code
    * CharMatcher.ascii().matchesAllOf(ipString)}.
    *
@@ -906,8 +906,8 @@ public final class InetAddresses {
    * (::1)) are hashed to avoid the security risk associated with extracting an embedded IPv4
    * address that might permit elevated privileges.
    *
-   * @param ip {@link InetAddress} to "coerce"
-   * @return {@link Inet4Address} represented "coerced" address
+   * @param ip {@code InetAddress} to "coerce"
+   * @return {@code Inet4Address} represented "coerced" address
    * @since 7.0
    */
   public static Inet4Address getCoercedIPv4Address(InetAddress ip) {
@@ -965,10 +965,10 @@ public final class InetAddresses {
    * to handle IPv6 addresses as well until the application is suitably fixed.
    *
    * <p>NOTE: an IPv6 address coerced to an IPv4 address can only be used for such purposes as
-   * rudimentary identification or indexing into a collection of real {@link InetAddress}es. They
+   * rudimentary identification or indexing into a collection of real {@code InetAddress}es. They
    * cannot be used as real addresses for the purposes of network communication.
    *
-   * @param ip {@link InetAddress} to convert
+   * @param ip {@code InetAddress} to convert
    * @return {@code int}, "coerced" if ip is not an IPv4 address
    * @since 7.0
    */
@@ -981,7 +981,7 @@ public final class InetAddresses {
    *
    * <p>Unlike {@code coerceToInteger}, IPv6 addresses are not coerced to IPv4 addresses.
    *
-   * @param address {@link InetAddress} to convert
+   * @param address {@code InetAddress} to convert
    * @return {@code BigInteger} representation of the address
    * @since 28.2
    */
@@ -993,7 +993,7 @@ public final class InetAddresses {
    * Returns an Inet4Address having the integer value specified by the argument.
    *
    * @param address {@code int}, the 32bit integer address to be converted
-   * @return {@link Inet4Address} equivalent of the argument
+   * @return {@code Inet4Address} equivalent of the argument
    */
   public static Inet4Address fromInteger(int address) {
     return getInet4Address(Ints.toByteArray(address));
@@ -1065,7 +1065,7 @@ public final class InetAddresses {
   }
 
   /**
-   * Returns an address from a <b>little-endian ordered</b> byte array (the opposite of what {@link
+   * Returns an address from a <b>little-endian ordered</b> byte array (the opposite of what {@code
    * InetAddress#getByAddress} expects).
    *
    * <p>IPv4 address byte array must be 4 bytes long and IPv6 byte array must be 16 bytes long.

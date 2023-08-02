@@ -64,7 +64,7 @@ import dev.mccue.jsr305.CheckForNull;
  * folding and comments.
  *
  * <p>For media types that take a charset the predefined constants default to UTF-8 and have a
- * "_UTF_8" suffix. To get a version without a character set, use {@link #withoutParameters}.
+ * "_UTF_8" suffix. To get a version without a character set, use {@code #withoutParameters}.
  *
  * @since 12.0
  * @author Gregory Kick
@@ -155,7 +155,7 @@ public final class MediaType {
   public static final MediaType PLAIN_TEXT_UTF_8 = createConstantUtf8(TEXT_TYPE, "plain");
 
   /**
-   * <a href="http://www.rfc-editor.org/rfc/rfc4329.txt">RFC 4329</a> declares {@link
+   * <a href="http://www.rfc-editor.org/rfc/rfc4329.txt">RFC 4329</a> declares {@code
    * #JAVASCRIPT_UTF_8 application/javascript} to be the correct media type for JavaScript, but this
    * may be necessary in certain situations for compatibility.
    */
@@ -180,7 +180,7 @@ public final class MediaType {
 
   /**
    * As described in <a href="http://www.ietf.org/rfc/rfc3023.txt">RFC 3023</a>, this constant
-   * ({@code text/xml}) is used for XML documents that are "readable by casual users." {@link
+   * ({@code text/xml}) is used for XML documents that are "readable by casual users." {@code
    * #APPLICATION_XML_UTF_8} is provided for documents that are intended for applications.
    */
   public static final MediaType XML_UTF_8 = createConstantUtf8(TEXT_TYPE, "xml");
@@ -376,7 +376,7 @@ public final class MediaType {
   /**
    * As described in <a href="http://www.ietf.org/rfc/rfc3023.txt">RFC 3023</a>, this constant
    * ({@code application/xml}) is used for XML documents that are "unreadable by casual users."
-   * {@link #XML_UTF_8} is provided for documents that may be read by users.
+   * {@code #XML_UTF_8} is provided for documents that may be read by users.
    *
    * @since 14.0
    */
@@ -439,7 +439,7 @@ public final class MediaType {
    * known not to trigger content sniffing in current browsers</a>. It <i>should not</i> be used in
    * other situations as it is not specified by any RFC and does not appear in the <a
    * href="http://www.iana.org/assignments/media-types">/IANA MIME Media Types</a> list. Consider
-   * {@link #OCTET_STREAM} for binary data that is not being served to a browser.
+   * {@code #OCTET_STREAM} for binary data that is not being served to a browser.
    *
    * @since 14.0
    */
@@ -465,7 +465,7 @@ public final class MediaType {
 
   /**
    * <a href="http://www.rfc-editor.org/rfc/rfc4329.txt">RFC 4329</a> declares this to be the
-   * correct media type for JavaScript, but {@link #TEXT_JAVASCRIPT_UTF_8 text/javascript} may be
+   * correct media type for JavaScript, but {@code #TEXT_JAVASCRIPT_UTF_8 text/javascript} may be
    * necessary in certain situations for compatibility.
    */
   public static final MediaType JAVASCRIPT_UTF_8 =
@@ -640,7 +640,7 @@ public final class MediaType {
   public static final MediaType RTF_UTF_8 = createConstantUtf8(APPLICATION_TYPE, "rtf");
 
   /**
-   * <a href="https://tools.ietf.org/html/rfc8081">RFC 8081</a> declares {@link #FONT_SFNT
+   * <a href="https://tools.ietf.org/html/rfc8081">RFC 8081</a> declares {@code #FONT_SFNT
    * font/sfnt} to be the correct media type for SFNT, but this may be necessary in certain
    * situations for compatibility.
    *
@@ -675,7 +675,7 @@ public final class MediaType {
   public static final MediaType TAR = createConstant(APPLICATION_TYPE, "x-tar");
 
   /**
-   * <a href="https://tools.ietf.org/html/rfc8081">RFC 8081</a> declares {@link #FONT_WOFF
+   * <a href="https://tools.ietf.org/html/rfc8081">RFC 8081</a> declares {@code #FONT_WOFF
    * font/woff} to be the correct media type for WOFF, but this may be necessary in certain
    * situations for compatibility.
    *
@@ -684,7 +684,7 @@ public final class MediaType {
   public static final MediaType WOFF = createConstant(APPLICATION_TYPE, "font-woff");
 
   /**
-   * <a href="https://tools.ietf.org/html/rfc8081">RFC 8081</a> declares {@link #FONT_WOFF2
+   * <a href="https://tools.ietf.org/html/rfc8081">RFC 8081</a> declares {@code #FONT_WOFF2
    * font/woff2} to be the correct media type for WOFF2, but this may be necessary in certain
    * situations for compatibility.
    *
@@ -727,7 +727,7 @@ public final class MediaType {
   /**
    * <a href="https://en.wikipedia.org/wiki/SFNT">Spline or Scalable Font Format</a> (SFNT). <a
    * href="https://tools.ietf.org/html/rfc8081">RFC 8081</a> declares this to be the correct media
-   * type for SFNT, but {@link #SFNT application/font-sfnt} may be necessary in certain situations
+   * type for SFNT, but {@code #SFNT application/font-sfnt} may be necessary in certain situations
    * for compatibility.
    *
    * @since 30.0
@@ -745,7 +745,7 @@ public final class MediaType {
   /**
    * <a href="http://en.wikipedia.org/wiki/Web_Open_Font_Format">Web Open Font Format</a> (WOFF). <a
    * href="https://tools.ietf.org/html/rfc8081">RFC 8081</a> declares this to be the correct media
-   * type for SFNT, but {@link #WOFF application/font-woff} may be necessary in certain situations
+   * type for SFNT, but {@code #WOFF application/font-woff} may be necessary in certain situations
    * for compatibility.
    *
    * @since 30.0
@@ -755,7 +755,7 @@ public final class MediaType {
   /**
    * <a href="http://en.wikipedia.org/wiki/Web_Open_Font_Format">Web Open Font Format</a> (WOFF2).
    * <a href="https://tools.ietf.org/html/rfc8081">RFC 8081</a> declares this to be the correct
-   * media type for SFNT, but {@link #WOFF2 application/font-woff2} may be necessary in certain
+   * media type for SFNT, but {@code #WOFF2 application/font-woff2} may be necessary in certain
    * situations for compatibility.
    *
    * @since 30.0
@@ -874,9 +874,9 @@ public final class MediaType {
 
   /**
    * <em>Replaces</em> all parameters with the given attribute with a single parameter with the
-   * given value. If multiple parameters with the same attributes are necessary use {@link
-   * #withParameters(String, Iterable)}. Prefer {@link #withCharset} for setting the {@code charset}
-   * parameter when using a {@link Charset} object.
+   * given value. If multiple parameters with the same attributes are necessary use {@code
+   * #withParameters(String, Iterable)}. Prefer {@code #withCharset} for setting the {@code charset}
+   * parameter when using a {@code Charset} object.
    *
    * @throws IllegalArgumentException if either {@code attribute} or {@code value} is invalid
    */
@@ -886,12 +886,12 @@ public final class MediaType {
 
   /**
    * Returns a new instance with the same type and subtype as this instance, with the {@code
-   * charset} parameter set to the {@link Charset#name()} of the given charset. Only one {@code
+   * charset} parameter set to the {@code Charset#name name} of the given charset. Only one {@code
    * charset} parameter will be present on the new instance regardless of the number set on this
    * one.
    *
    * <p>If a charset must be specified that is not supported on this JVM (and thus is not
-   * representable as a {@link Charset} instance), use {@link #withParameter}.
+   * representable as a {@code Charset} instance), use {@code #withParameter}.
    */
   public MediaType withCharset(Charset charset) {
     checkNotNull(charset);

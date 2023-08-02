@@ -14,15 +14,15 @@
 
 package dev.mccue.guava.net.thirdparty.publicsuffix;
 
+
 /**
- * <b>Do not use this class directly. For access to public-suffix information, use {@link
+ * <b>Do not use this class directly. For access to public-suffix information, use {@code
  * dev.mccue.guava.net.InternetDomainName}.</b>
  *
  * <p>Specifies the type of a top-level domain definition.
  *
  * @since 23.3
  */
-@Beta
 public enum PublicSuffixType {
 
   /** Public suffix that is provided by a private company, e.g. "blogspot.com" */

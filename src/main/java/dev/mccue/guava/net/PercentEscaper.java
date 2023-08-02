@@ -24,7 +24,7 @@ import dev.mccue.jsr305.CheckForNull;
  * encoding scheme. The set of safe characters (those which remain unescaped) can be specified on
  * construction.
  *
- * <p>This class is primarily used for creating URI escapers in {@link UrlEscapers} but can be used
+ * <p>This class is primarily used for creating URI escapers in {@code UrlEscapers} but can be used
  * directly if required. While URI escapers impose specific semantics on which characters are
  * considered 'safe', this class has a minimal set of restrictions.
  *
@@ -120,7 +120,7 @@ public final class PercentEscaper extends UnicodeEscaper {
 
   /*
    * Overridden for performance. For unescaped strings this improved the performance of the uri
-   * escaper from ~760ns to ~400ns as measured by {@link CharEscapersBenchmark}.
+   * escaper from ~760ns to ~400ns as measured by {@code CharEscapersBenchmark}.
    */
   @Override
   protected int nextEscapeIndex(CharSequence csq, int index, int end) {
@@ -136,7 +136,7 @@ public final class PercentEscaper extends UnicodeEscaper {
 
   /*
    * Overridden for performance. For unescaped strings this improved the performance of the uri
-   * escaper from ~400ns to ~170ns as measured by {@link CharEscapersBenchmark}.
+   * escaper from ~400ns to ~170ns as measured by {@code CharEscapersBenchmark}.
    */
   @Override
   public String escape(String s) {

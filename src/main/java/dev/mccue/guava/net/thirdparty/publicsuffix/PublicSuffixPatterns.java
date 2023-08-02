@@ -18,22 +18,20 @@
 
 package dev.mccue.guava.net.thirdparty.publicsuffix;
 
-
 import dev.mccue.guava.collect.ImmutableMap;
 
 /**
- * <b>Do not use this class directly. For access to public-suffix information, use {@link
+ * <b>Do not use this class directly. For access to public-suffix information, use {@code
  * dev.mccue.guava.net.InternetDomainName}.</b>
  *
  * <p>A generated static class containing public members which provide domain name patterns used in
  * determining whether a given domain name is an effective top-level domain (public suffix).
  *
  * <p>Because this class is used in GWT, the data members are stored in a space-efficient manner.
- * See {@link TrieParser}.
+ * See {@code TrieParser}.
  *
  * @since 16.0
  */
-@Beta
 public final class PublicSuffixPatterns {
   private PublicSuffixPatterns() {}
 

@@ -42,7 +42,7 @@ public final class UrlEscapers {
           + "@:"; // The gendelim characters permitted in paths.
 
   /**
-   * Returns an {@link Escaper} instance that escapes strings so they can be safely included in <a
+   * Returns an {@code Escaper} instance that escapes strings so they can be safely included in <a
    * href="https://goo.gl/MplK6I">URL form parameter names and values</a>. Escaping is performed
    * with the UTF-8 character encoding. The caller is responsible for <a
    * href="https://goo.gl/9EfkM1">replacing any unpaired carriage return or line feed characters
@@ -77,7 +77,7 @@ public final class UrlEscapers {
       new PercentEscaper(URL_FORM_PARAMETER_OTHER_SAFE_CHARS, true);
 
   /**
-   * Returns an {@link Escaper} instance that escapes strings so they can be safely included in <a
+   * Returns an {@code Escaper} instance that escapes strings so they can be safely included in <a
    * href="https://goo.gl/m2MIf0">URL path segments</a>. The returned escaper escapes all non-ASCII
    * characters, even though <a href="https://goo.gl/e7E0In">many of these are accepted in modern
    * URLs</a>. (<a href="https://goo.gl/jfVxXW">If the escaper were to leave these characters
@@ -113,7 +113,7 @@ public final class UrlEscapers {
       new PercentEscaper(URL_PATH_OTHER_SAFE_CHARS_LACKING_PLUS + "+", false);
 
   /**
-   * Returns an {@link Escaper} instance that escapes strings so they can be safely included in a <a
+   * Returns an {@code Escaper} instance that escapes strings so they can be safely included in a <a
    * href="https://goo.gl/xXEq4p">URL fragment</a>. The returned escaper escapes all non-ASCII
    * characters, even though <a href="https://goo.gl/e7E0In">many of these are accepted in modern
    * URLs</a>.

@@ -35,7 +35,6 @@ final class TrieParser {
     return parseFullString(encoded);
   }
 
-  @VisibleForTesting
   static ImmutableMap<String, PublicSuffixType> parseFullString(String encoded) {
     ImmutableMap.Builder<String, PublicSuffixType> builder = ImmutableMap.builder();
     int encodedLen = encoded.length();

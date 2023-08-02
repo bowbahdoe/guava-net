@@ -26,6 +26,7 @@ import dev.mccue.guava.base.Splitter;
 import dev.mccue.guava.collect.ImmutableList;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.Immutable;
+import com.google.errorprone.annotations.concurrent.LazyInit;
 import dev.mccue.guava.net.thirdparty.publicsuffix.PublicSuffixPatterns;
 import dev.mccue.guava.net.thirdparty.publicsuffix.PublicSuffixType;
 import java.util.List;
@@ -39,12 +40,12 @@ import dev.mccue.jsr305.CheckForNull;
  * <p>One common use of this class is to determine whether a given string is likely to represent an
  * addressable domain on the web -- that is, for a candidate string {@code "xxx"}, might browsing to
  * {@code "http://xxx/"} result in a webpage being displayed? In the past, this test was frequently
- * done by determining whether the domain ended with a {@linkplain #isPublicSuffix() public suffix}
+ * done by determining whether the domain ended with a {@code #isPublicSuffix() public suffix}
  * but was not itself a public suffix. However, this test is no longer accurate. There are many
  * domains which are both public suffixes and addressable as hosts; {@code "uk.com"} is one example.
- * Using the subset of public suffixes that are {@linkplain #isRegistrySuffix() registry suffixes},
+ * Using the subset of public suffixes that are {@code #isRegistrySuffix() registry suffixes},
  * one can get a better result, as only a few registry suffixes are addressable. However, the most
- * useful test to determine if a domain is a plausible web host is {@link #hasPublicSuffix()}. This
+ * useful test to determine if a domain is a plausible web host is {@code #hasPublicSuffix()}. This
  * will return {@code true} for many domains which (currently) are not hosts, such as {@code "com"},
  * but given that any public suffix may become a host without warning, it is better to err on the
  * side of permissiveness and thus avoid spurious rejection of valid sites. Of course, to actually
@@ -59,8 +60,8 @@ import dev.mccue.jsr305.CheckForNull;
  *       period.
  * </ol>
  *
- * <p>The normalized values will be returned from {@link #toString()} and {@link #parts()}, and will
- * be reflected in the result of {@link #equals(Object)}.
+ * <p>The normalized values will be returned from {@code #toString()} and {@code #parts()}, and will
+ * be reflected in the result of {@code #equals(Object)}.
  *
  * <p><a href="http://en.wikipedia.org/wiki/Internationalized_domain_name">Internationalized domain
  * names</a> such as {@code 网络.cn} are supported, as are the equivalent <a
@@ -70,6 +71,7 @@ import dev.mccue.jsr305.CheckForNull;
  * @author Catherine Berry
  * @since 5.0
  */
+
 @Immutable
 @ElementTypesAreNonnullByDefault
 public final class InternetDomainName {
@@ -79,10 +81,16 @@ public final class InternetDomainName {
   private static final Joiner DOT_JOINER = Joiner.on('.');
 
   /**
-   * Value of {@link #publicSuffixIndex} or {@link #registrySuffixIndex} which indicates that no
+   * Value of {@code #publicSuffixIndex()} or {@code #registrySuffixIndex()} which indicates that no
    * relevant suffix was found.
    */
   private static final int NO_SUFFIX_FOUND = -1;
+
+  /**
+   * Value of {@code #publicSuffixIndexCache} or {@code #registrySuffixIndexCache} which indicates
+   * that they were not initialized yet.
+   */
+  private static final int SUFFIX_NOT_INITIALIZED = -2;
 
   /**
    * Maximum parts (labels) in a domain name. This value arises from the 255-octet limit described
@@ -111,22 +119,28 @@ public final class InternetDomainName {
   private final ImmutableList<String> parts;
 
   /**
-   * The index in the {@link #parts()} list at which the public suffix begins. For example, for the
-   * domain name {@code myblog.blogspot.co.uk}, the value would be 1 (the index of the {@code
-   * blogspot} part). The value is negative (specifically, {@link #NO_SUFFIX_FOUND}) if no public
-   * suffix was found.
+   * Cached value of #publicSuffixIndex(). Do not use directly.
+   *
+   * <p>Since this field isn't {@code volatile}, if an instance of this class is shared across
+   * threads before it is initialized, then each thread is likely to compute their own copy of the
+   * value.
    */
-  private final int publicSuffixIndex;
+  @SuppressWarnings("Immutable")
+  @LazyInit
+  private int publicSuffixIndexCache = SUFFIX_NOT_INITIALIZED;
 
   /**
-   * The index in the {@link #parts()} list at which the registry suffix begins. For example, for
-   * the domain name {@code myblog.blogspot.co.uk}, the value would be 2 (the index of the {@code
-   * co} part). The value is negative (specifically, {@link #NO_SUFFIX_FOUND}) if no registry suffix
-   * was found.
+   * Cached value of #registrySuffixIndex(). Do not use directly.
+   *
+   * <p>Since this field isn't {@code volatile}, if an instance of this class is shared across
+   * threads before it is initialized, then each thread is likely to compute their own copy of the
+   * value.
    */
-  private final int registrySuffixIndex;
+  @SuppressWarnings("Immutable")
+  @LazyInit
+  private int registrySuffixIndexCache = SUFFIX_NOT_INITIALIZED;
 
-  /** Constructor used to implement {@link #from(String)}, and from subclasses. */
+  /** Constructor used to implement {@code #from(String)}, and from subclasses. */
   InternetDomainName(String name) {
     // Normalize:
     // * ASCII characters to lowercase
@@ -145,15 +159,42 @@ public final class InternetDomainName {
     this.parts = ImmutableList.copyOf(DOT_SPLITTER.split(name));
     checkArgument(parts.size() <= MAX_PARTS, "Domain has too many parts: '%s'", name);
     checkArgument(validateSyntax(parts), "Not a valid domain name: '%s'", name);
+  }
 
-    this.publicSuffixIndex = findSuffixOfType(Optional.<PublicSuffixType>absent());
-    this.registrySuffixIndex = findSuffixOfType(Optional.of(PublicSuffixType.REGISTRY));
+  /**
+   * The index in the {@code #parts()} list at which the public suffix begins. For example, for the
+   * domain name {@code myblog.blogspot.co.uk}, the value would be 1 (the index of the {@code
+   * blogspot} part). The value is negative (specifically, {@code #NO_SUFFIX_FOUND}) if no public
+   * suffix was found.
+   */
+  private int publicSuffixIndex() {
+    int publicSuffixIndexLocal = publicSuffixIndexCache;
+    if (publicSuffixIndexLocal == SUFFIX_NOT_INITIALIZED) {
+      publicSuffixIndexCache =
+          publicSuffixIndexLocal = findSuffixOfType(Optional.<PublicSuffixType>absent());
+    }
+    return publicSuffixIndexLocal;
+  }
+
+  /**
+   * The index in the {@code #parts()} list at which the registry suffix begins. For example, for
+   * the domain name {@code myblog.blogspot.co.uk}, the value would be 2 (the index of the {@code
+   * co} part). The value is negative (specifically, {@code #NO_SUFFIX_FOUND}) if no registry suffix
+   * was found.
+   */
+  private int registrySuffixIndex() {
+    int registrySuffixIndexLocal = registrySuffixIndexCache;
+    if (registrySuffixIndexLocal == SUFFIX_NOT_INITIALIZED) {
+      registrySuffixIndexCache =
+          registrySuffixIndexLocal = findSuffixOfType(Optional.of(PublicSuffixType.REGISTRY));
+    }
+    return registrySuffixIndexLocal;
   }
 
   /**
    * Returns the index of the leftmost part of the suffix, or -1 if not found. Note that the value
-   * defined as a suffix may not produce {@code true} results from {@link #isPublicSuffix()} or
-   * {@link #isRegistrySuffix()} if the domain ends with an excluded domain pattern such as {@code
+   * defined as a suffix may not produce {@code true} results from {@code #isPublicSuffix()} or
+   * {@code #isRegistrySuffix()} if the domain ends with an excluded domain pattern such as {@code
    * "nhs.uk"}.
    *
    * <p>If a {@code desiredType} is specified, this method only finds suffixes of the given type.
@@ -188,7 +229,7 @@ public final class InternetDomainName {
   }
 
   /**
-   * Returns an instance of {@link InternetDomainName} after lenient validation. Specifically,
+   * Returns an instance of {@code InternetDomainName} after lenient validation. Specifically,
    * validation against <a href="http://www.ietf.org/rfc/rfc3490.txt">RFC 3490</a>
    * ("Internationalizing Domain Names in Applications") is skipped, while validation against <a
    * href="http://www.ietf.org/rfc/rfc1035.txt">RFC 1035</a> is relaxed in the following ways:
@@ -202,7 +243,7 @@ public final class InternetDomainName {
    *
    * @param domain A domain name (not IP address)
    * @throws IllegalArgumentException if {@code domain} is not syntactically valid according to
-   *     {@link #isValid}
+   *     {@code #isValid}
    * @since 10.0 (previously named {@code fromLenient})
    */
   @CanIgnoreReturnValue // TODO(b/219820829): consider removing
@@ -246,7 +287,7 @@ public final class InternetDomainName {
       DIGIT_MATCHER.or(LETTER_MATCHER).or(DASH_MATCHER);
 
   /**
-   * Helper method for {@link #validateSyntax(List)}. Validates that one part of a domain name is
+   * Helper method for {@code #validateSyntax(List)}. Validates that one part of a domain name is
    * valid.
    *
    * @param part The domain name part to be validated
@@ -315,7 +356,7 @@ public final class InternetDomainName {
    * co.uk} or {@code pvt.k12.wy.us}. Examples of domain names that are <i>not</i> public suffixes
    * include {@code google.com}, {@code foo.co.uk}, and {@code myblog.blogspot.com}.
    *
-   * <p>Public suffixes are a proper superset of {@linkplain #isRegistrySuffix() registry suffixes}.
+   * <p>Public suffixes are a proper superset of {@code #isRegistrySuffix() registry suffixes}.
    * The list of public suffixes additionally contains privately owned domain names under which
    * Internet users can register subdomains. An example of a public suffix that is not a registry
    * suffix is {@code blogspot.com}. Note that it is true that all public suffixes <i>have</i>
@@ -329,38 +370,38 @@ public final class InternetDomainName {
    * @since 6.0
    */
   public boolean isPublicSuffix() {
-    return publicSuffixIndex == 0;
+    return publicSuffixIndex() == 0;
   }
 
   /**
-   * Indicates whether this domain name ends in a {@linkplain #isPublicSuffix() public suffix},
+   * Indicates whether this domain name ends in a {@code #isPublicSuffix() public suffix},
    * including if it is a public suffix itself. For example, returns {@code true} for {@code
    * www.google.com}, {@code foo.co.uk} and {@code com}, but not for {@code invalid} or {@code
    * google.invalid}. This is the recommended method for determining whether a domain is potentially
    * an addressable host.
    *
-   * <p>Note that this method is equivalent to {@link #hasRegistrySuffix()} because all registry
+   * <p>Note that this method is equivalent to {@code #hasRegistrySuffix()} because all registry
    * suffixes are public suffixes <i>and</i> all public suffixes have registry suffixes.
    *
    * @since 6.0
    */
   public boolean hasPublicSuffix() {
-    return publicSuffixIndex != NO_SUFFIX_FOUND;
+    return publicSuffixIndex() != NO_SUFFIX_FOUND;
   }
 
   /**
-   * Returns the {@linkplain #isPublicSuffix() public suffix} portion of the domain name, or {@code
+   * Returns the {@code #isPublicSuffix() public suffix} portion of the domain name, or {@code
    * null} if no public suffix is present.
    *
    * @since 6.0
    */
   @CheckForNull
   public InternetDomainName publicSuffix() {
-    return hasPublicSuffix() ? ancestor(publicSuffixIndex) : null;
+    return hasPublicSuffix() ? ancestor(publicSuffixIndex()) : null;
   }
 
   /**
-   * Indicates whether this domain name ends in a {@linkplain #isPublicSuffix() public suffix},
+   * Indicates whether this domain name ends in a {@code #isPublicSuffix() public suffix},
    * while not being a public suffix itself. For example, returns {@code true} for {@code
    * www.google.com}, {@code foo.co.uk} and {@code myblog.blogspot.com}, but not for {@code com},
    * {@code co.uk}, {@code google.invalid}, or {@code blogspot.com}.
@@ -372,12 +413,12 @@ public final class InternetDomainName {
    * @since 6.0
    */
   public boolean isUnderPublicSuffix() {
-    return publicSuffixIndex > 0;
+    return publicSuffixIndex() > 0;
   }
 
   /**
    * Indicates whether this domain name is composed of exactly one subdomain component followed by a
-   * {@linkplain #isPublicSuffix() public suffix}. For example, returns {@code true} for {@code
+   * {@code #isPublicSuffix() public suffix}. For example, returns {@code true} for {@code
    * google.com} {@code foo.co.uk}, and {@code myblog.blogspot.com}, but not for {@code
    * www.google.com}, {@code co.uk}, or {@code blogspot.com}.
    *
@@ -388,17 +429,17 @@ public final class InternetDomainName {
    * @since 6.0
    */
   public boolean isTopPrivateDomain() {
-    return publicSuffixIndex == 1;
+    return publicSuffixIndex() == 1;
   }
 
   /**
-   * Returns the portion of this domain name that is one level beneath the {@linkplain
+   * Returns the portion of this domain name that is one level beneath the {@code
    * #isPublicSuffix() public suffix}. For example, for {@code x.adwords.google.co.uk} it returns
    * {@code google.co.uk}, since {@code co.uk} is a public suffix. Similarly, for {@code
    * myblog.blogspot.com} it returns the same domain, {@code myblog.blogspot.com}, since {@code
    * blogspot.com} is a public suffix.
    *
-   * <p>If {@link #isTopPrivateDomain()} is true, the current domain name instance is returned.
+   * <p>If {@code #isTopPrivateDomain()} is true, the current domain name instance is returned.
    *
    * <p>This method can be used to determine the probable highest level parent domain for which
    * cookies may be set, though even that depends on individual browsers' implementations of cookie
@@ -412,7 +453,7 @@ public final class InternetDomainName {
       return this;
     }
     checkState(isUnderPublicSuffix(), "Not under a public suffix: %s", name);
-    return ancestor(publicSuffixIndex - 1);
+    return ancestor(publicSuffixIndex() - 1);
   }
 
   /**
@@ -424,7 +465,7 @@ public final class InternetDomainName {
    * pvt.k12.wy.us}. Examples of domain names that are <i>not</i> registry suffixes include {@code
    * google.com} and {@code foo.co.uk}.
    *
-   * <p>Registry suffixes are a proper subset of {@linkplain #isPublicSuffix() public suffixes}. The
+   * <p>Registry suffixes are a proper subset of {@code #isPublicSuffix() public suffixes}. The
    * list of public suffixes additionally contains privately owned domain names under which Internet
    * users can register subdomains. An example of a public suffix that is not a registry suffix is
    * {@code blogspot.com}. Note that it is true that all public suffixes <i>have</i> registry
@@ -439,37 +480,37 @@ public final class InternetDomainName {
    * @since 23.3
    */
   public boolean isRegistrySuffix() {
-    return registrySuffixIndex == 0;
+    return registrySuffixIndex() == 0;
   }
 
   /**
-   * Indicates whether this domain name ends in a {@linkplain #isRegistrySuffix() registry suffix},
+   * Indicates whether this domain name ends in a {@code #isRegistrySuffix() registry suffix},
    * including if it is a registry suffix itself. For example, returns {@code true} for {@code
    * www.google.com}, {@code foo.co.uk} and {@code com}, but not for {@code invalid} or {@code
    * google.invalid}.
    *
-   * <p>Note that this method is equivalent to {@link #hasPublicSuffix()} because all registry
+   * <p>Note that this method is equivalent to {@code #hasPublicSuffix()} because all registry
    * suffixes are public suffixes <i>and</i> all public suffixes have registry suffixes.
    *
    * @since 23.3
    */
   public boolean hasRegistrySuffix() {
-    return registrySuffixIndex != NO_SUFFIX_FOUND;
+    return registrySuffixIndex() != NO_SUFFIX_FOUND;
   }
 
   /**
-   * Returns the {@linkplain #isRegistrySuffix() registry suffix} portion of the domain name, or
+   * Returns the {@code #isRegistrySuffix() registry suffix} portion of the domain name, or
    * {@code null} if no registry suffix is present.
    *
    * @since 23.3
    */
   @CheckForNull
   public InternetDomainName registrySuffix() {
-    return hasRegistrySuffix() ? ancestor(registrySuffixIndex) : null;
+    return hasRegistrySuffix() ? ancestor(registrySuffixIndex()) : null;
   }
 
   /**
-   * Indicates whether this domain name ends in a {@linkplain #isRegistrySuffix() registry suffix},
+   * Indicates whether this domain name ends in a {@code #isRegistrySuffix() registry suffix},
    * while not being a registry suffix itself. For example, returns {@code true} for {@code
    * www.google.com}, {@code foo.co.uk} and {@code blogspot.com}, but not for {@code com}, {@code
    * co.uk}, or {@code google.invalid}.
@@ -477,35 +518,35 @@ public final class InternetDomainName {
    * @since 23.3
    */
   public boolean isUnderRegistrySuffix() {
-    return registrySuffixIndex > 0;
+    return registrySuffixIndex() > 0;
   }
 
   /**
    * Indicates whether this domain name is composed of exactly one subdomain component followed by a
-   * {@linkplain #isRegistrySuffix() registry suffix}. For example, returns {@code true} for {@code
+   * {@code #isRegistrySuffix() registry suffix}. For example, returns {@code true} for {@code
    * google.com}, {@code foo.co.uk}, and {@code blogspot.com}, but not for {@code www.google.com},
    * {@code co.uk}, or {@code myblog.blogspot.com}.
    *
    * <p><b>Warning:</b> This method should not be used to determine the probable highest level
-   * parent domain for which cookies may be set. Use {@link #topPrivateDomain()} for that purpose.
+   * parent domain for which cookies may be set. Use {@code #topPrivateDomain()} for that purpose.
    *
    * @since 23.3
    */
   public boolean isTopDomainUnderRegistrySuffix() {
-    return registrySuffixIndex == 1;
+    return registrySuffixIndex() == 1;
   }
 
   /**
-   * Returns the portion of this domain name that is one level beneath the {@linkplain
+   * Returns the portion of this domain name that is one level beneath the {@code
    * #isRegistrySuffix() registry suffix}. For example, for {@code x.adwords.google.co.uk} it
    * returns {@code google.co.uk}, since {@code co.uk} is a registry suffix. Similarly, for {@code
    * myblog.blogspot.com} it returns {@code blogspot.com}, since {@code com} is a registry suffix.
    *
-   * <p>If {@link #isTopDomainUnderRegistrySuffix()} is true, the current domain name instance is
+   * <p>If {@code #isTopDomainUnderRegistrySuffix()} is true, the current domain name instance is
    * returned.
    *
    * <p><b>Warning:</b> This method should not be used to determine whether a domain is probably the
-   * highest level for which cookies may be set. Use {@link #isTopPrivateDomain()} for that purpose.
+   * highest level for which cookies may be set. Use {@code #isTopPrivateDomain()} for that purpose.
    *
    * @throws IllegalStateException if this domain does not end with a registry suffix
    * @since 23.3
@@ -515,7 +556,7 @@ public final class InternetDomainName {
       return this;
     }
     checkState(isUnderRegistrySuffix(), "Not under a registry suffix: %s", name);
-    return ancestor(registrySuffixIndex - 1);
+    return ancestor(registrySuffixIndex() - 1);
   }
 
   /** Indicates whether this domain is composed of two or more parts. */
@@ -528,7 +569,7 @@ public final class InternetDomainName {
    * current domain with the leftmost part removed. For example, the parent of {@code
    * www.google.com} is {@code google.com}.
    *
-   * @throws IllegalStateException if the domain has no parent, as determined by {@link #hasParent}
+   * @throws IllegalStateException if the domain has no parent, as determined by {@code #hasParent}
    */
   public InternetDomainName parent() {
     checkState(hasParent(), "Domain '%s' has no parent", name);
@@ -550,7 +591,7 @@ public final class InternetDomainName {
    * Creates and returns a new {@code InternetDomainName} by prepending the argument and a dot to
    * the current name. For example, {@code InternetDomainName.from("foo.com").child("www.bar")}
    * returns a new {@code InternetDomainName} with the value {@code www.bar.foo.com}. Only lenient
-   * validation is performed, as described {@link #from(String) here}.
+   * validation is performed, as described {@code #from(String) here}.
    *
    * @throws NullPointerException if leftParts is null
    * @throws IllegalArgumentException if the resulting name is not valid

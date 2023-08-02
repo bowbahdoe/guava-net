@@ -26,15 +26,15 @@ import dev.mccue.jsr305.CheckForNull;
  *
  * <p>Because this class is intended to represent host specifiers which can reasonably be used in a
  * URI, the domain name case is further restricted to include only those domain names which end in a
- * recognized public suffix; see {@link InternetDomainName#isPublicSuffix()} for details.
+ * recognized public suffix; see {@code InternetDomainName#isPublicSuffix()} for details.
  *
  * <p>Note that no network lookups are performed by any {@code HostSpecifier} methods. No attempt is
  * made to verify that a provided specifier corresponds to a real or accessible host. Only syntactic
  * and pattern-based checks are performed.
  *
- * <p>If you know that a given string represents a numeric IP address, use {@link InetAddresses} to
- * obtain and manipulate a {@link InetAddress} instance from it rather than using this
- * class. Similarly, if you know that a given string represents a domain name, use {@link
+ * <p>If you know that a given string represents a numeric IP address, use {@code InetAddresses} to
+ * obtain and manipulate a {@code java.net.InetAddress} instance from it rather than using this
+ * class. Similarly, if you know that a given string represents a domain name, use {@code
  * InternetDomainName} rather than this class.
  *
  * @author Craig Berry
@@ -51,7 +51,7 @@ public final class HostSpecifier {
 
   /**
    * Returns a {@code HostSpecifier} built from the provided {@code specifier}, which is already
-   * known to be valid. If the {@code specifier} might be invalid, use {@link #from(String)}
+   * known to be valid. If the {@code specifier} might be invalid, use {@code #from(String)}
    * instead.
    *
    * <p>The specifier must be in one of these formats:
@@ -102,7 +102,7 @@ public final class HostSpecifier {
 
   /**
    * Attempts to return a {@code HostSpecifier} for the given string, throwing an exception if
-   * parsing fails. Always use this method in preference to {@link #fromValid(String)} for a
+   * parsing fails. Always use this method in preference to {@code #fromValid(String)} for a
    * specifier that is not already known to be valid.
    *
    * @throws ParseException if the specifier is not valid.
@@ -123,8 +123,8 @@ public final class HostSpecifier {
   }
 
   /**
-   * Determines whether {@code specifier} represents a valid {@link HostSpecifier} as described in
-   * the documentation for {@link #fromValid(String)}.
+   * Determines whether {@code specifier} represents a valid {@code HostSpecifier} as described in
+   * the documentation for {@code #fromValid(String)}.
    */
   public static boolean isValid(String specifier) {
     try {

@@ -14,6 +14,7 @@
 
 package dev.mccue.guava.net;
 
+
 /**
  * Contains constant definitions for the HTTP header field names. See:
  *
@@ -244,7 +245,7 @@ public final class HttpHeaders {
   /**
    * The HTTP nonstandard {@code X-Content-Security-Policy} header field name. It was introduced in
    * <a href="https://www.w3.org/TR/2011/WD-CSP-20111129/">CSP v.1</a> and used by the Firefox until
-   * version 23 and the Internet Explorer version 10. Please, use {@link #CONTENT_SECURITY_POLICY}
+   * version 23 and the Internet Explorer version 10. Please, use {@code #CONTENT_SECURITY_POLICY}
    * to pass the CSP.
    *
    * @since 20.0
@@ -253,7 +254,7 @@ public final class HttpHeaders {
   /**
    * The HTTP nonstandard {@code X-Content-Security-Policy-Report-Only} header field name. It was
    * introduced in <a href="https://www.w3.org/TR/2011/WD-CSP-20111129/">CSP v.1</a> and used by the
-   * Firefox until version 23 and the Internet Explorer version 10. Please, use {@link
+   * Firefox until version 23 and the Internet Explorer version 10. Please, use {@code
    * #CONTENT_SECURITY_POLICY_REPORT_ONLY} to pass the CSP.
    *
    * @since 20.0
@@ -263,7 +264,7 @@ public final class HttpHeaders {
   /**
    * The HTTP nonstandard {@code X-WebKit-CSP} header field name. It was introduced in <a
    * href="https://www.w3.org/TR/2011/WD-CSP-20111129/">CSP v.1</a> and used by the Chrome until
-   * version 25. Please, use {@link #CONTENT_SECURITY_POLICY} to pass the CSP.
+   * version 25. Please, use {@code #CONTENT_SECURITY_POLICY} to pass the CSP.
    *
    * @since 20.0
    */
@@ -271,7 +272,7 @@ public final class HttpHeaders {
   /**
    * The HTTP nonstandard {@code X-WebKit-CSP-Report-Only} header field name. It was introduced in
    * <a href="https://www.w3.org/TR/2011/WD-CSP-20111129/">CSP v.1</a> and used by the Chrome until
-   * version 25. Please, use {@link #CONTENT_SECURITY_POLICY_REPORT_ONLY} to pass the CSP.
+   * version 25. Please, use {@code #CONTENT_SECURITY_POLICY_REPORT_ONLY} to pass the CSP.
    *
    * @since 20.0
    */
@@ -420,7 +421,7 @@ public final class HttpHeaders {
   /**
    * The HTTP <a
    * href="https://iabtechlab.com/wp-content/uploads/2019/06/VAST_4.2_final_june26.pdf">{@code
-   * X-Device-Referer}</a> header field name. Header used for VAST requests to provide the {@link
+   * X-Device-Referer}</a> header field name. Header used for VAST requests to provide the {@code
    * #REFERER} header value that the on-behalf-of client would have used when making a request
    * itself.
    *
@@ -431,7 +432,7 @@ public final class HttpHeaders {
    * The HTTP <a
    * href="https://iabtechlab.com/wp-content/uploads/2019/06/VAST_4.2_final_june26.pdf">{@code
    * X-Device-Accept-Language}</a> header field name. Header used for VAST requests to provide the
-   * {@link #ACCEPT_LANGUAGE} header value that the on-behalf-of client would have used when making
+   * {@code #ACCEPT_LANGUAGE} header value that the on-behalf-of client would have used when making
    * a request itself.
    *
    * @since 31.0
@@ -441,7 +442,7 @@ public final class HttpHeaders {
    * The HTTP <a
    * href="https://iabtechlab.com/wp-content/uploads/2019/06/VAST_4.2_final_june26.pdf">{@code
    * X-Device-Requested-With}</a> header field name. Header used for VAST requests to provide the
-   * {@link #X_REQUESTED_WITH} header value that the on-behalf-of client would have used when making
+   * {@code #X_REQUESTED_WITH} header value that the on-behalf-of client would have used when making
    * a request itself.
    *
    * @since 31.0
@@ -685,7 +686,7 @@ public final class HttpHeaders {
    * The HTTP <a href="https://wicg.github.io/ua-client-hints/#sec-ch-ua-full-version">{@code
    * Sec-CH-UA-Full-Version}</a> header field name.
    *
-   * @deprecated Prefer {@link SEC_CH_UA_FULL_VERSION_LIST}.
+   * @deprecated Prefer {@code SEC_CH_UA_FULL_VERSION_LIST}.
    * @since 30.0
    */
   @Deprecated public static final String SEC_CH_UA_FULL_VERSION = "Sec-CH-UA-Full-Version";

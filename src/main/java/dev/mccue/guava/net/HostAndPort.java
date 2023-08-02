@@ -47,9 +47,9 @@ import dev.mccue.jsr305.CheckForNull;
  *   <li>example.com:80
  *   <li>192.0.2.1
  *   <li>192.0.2.1:80
- *   <li>[2001:db8::1] - {@link #getHost()} omits brackets
- *   <li>[2001:db8::1]:80 - {@link #getHost()} omits brackets
- *   <li>2001:db8::1 - Use {@link #requireBracketsForIPv6()} to prohibit this
+ *   <li>[2001:db8::1] - {@code #getHost()} omits brackets
+ *   <li>[2001:db8::1]:80 - {@code #getHost()} omits brackets
+ *   <li>2001:db8::1 - Use {@code #requireBracketsForIPv6()} to prohibit this
  * </ul>
  *
  * <p>Note that this is not an exhaustive list, because these methods are only concerned with
@@ -85,7 +85,7 @@ public final class HostAndPort implements Serializable {
    * IPv4/IPv6 literal.
    *
    * <p>A successful parse does not imply any degree of sanity in this field. For additional
-   * validation, see the {@link HostSpecifier} class.
+   * validation, see the {@code HostSpecifier} class.
    *
    * @since 20.0 (since 10.0 as {@code getHostText})
    */
@@ -102,7 +102,7 @@ public final class HostAndPort implements Serializable {
    * Get the current port number, failing if no port is defined.
    *
    * @return a validated port number, in the range [0..65535]
-   * @throws IllegalStateException if no port is defined. You can use {@link #withDefaultPort(int)}
+   * @throws IllegalStateException if no port is defined. You can use {@code #withDefaultPort(int)}
    *     to prevent this from occurring.
    */
   public int getPort() {
@@ -118,7 +118,7 @@ public final class HostAndPort implements Serializable {
   /**
    * Build a HostAndPort instance from separate host and port values.
    *
-   * <p>Note: Non-bracketed IPv6 literals are allowed. Use {@link #requireBracketsForIPv6()} to
+   * <p>Note: Non-bracketed IPv6 literals are allowed. Use {@code #requireBracketsForIPv6()} to
    * prohibit these.
    *
    * @param host the host string to parse. Must not contain a port number.
@@ -137,7 +137,7 @@ public final class HostAndPort implements Serializable {
   /**
    * Build a HostAndPort instance from a host only.
    *
-   * <p>Note: Non-bracketed IPv6 literals are allowed. Use {@link #requireBracketsForIPv6()} to
+   * <p>Note: Non-bracketed IPv6 literals are allowed. Use {@code #requireBracketsForIPv6()} to
    * prohibit these.
    *
    * @param host the host-only string to parse. Must not contain a port number.
@@ -154,7 +154,7 @@ public final class HostAndPort implements Serializable {
   /**
    * Split a freeform string into a host and port, without strict validation.
    *
-   * <p>Note that the host-only formats will leave the port field undefined. You can use {@link
+   * <p>Note that the host-only formats will leave the port field undefined. You can use {@code
    * #withDefaultPort(int)} to patch in a default value.
    *
    * @param hostPortString the input string to parse.
@@ -244,7 +244,7 @@ public final class HostAndPort implements Serializable {
   /**
    * Provide a default port if the parsed string contained only a host.
    *
-   * <p>You can chain this after {@link #fromString(String)} to include a port in case the port was
+   * <p>You can chain this after {@code #fromString(String)} to include a port in case the port was
    * omitted from the input string. If a port was already provided, then this method is a no-op.
    *
    * @param defaultPort a port number, from [0..65535]
@@ -262,11 +262,11 @@ public final class HostAndPort implements Serializable {
    * Generate an error if the host might be a non-bracketed IPv6 literal.
    *
    * <p>URI formatting requires that IPv6 literals be surrounded by brackets, like "[2001:db8::1]".
-   * Chain this call after {@link #fromString(String)} to increase the strictness of the parser, and
+   * Chain this call after {@code #fromString(String)} to increase the strictness of the parser, and
    * disallow IPv6 literals that don't contain these brackets.
    *
    * <p>Note that this parser identifies IPv6 literals solely based on the presence of a colon. To
-   * perform actual validation of IP addresses, see the {@link InetAddresses#forString(String)}
+   * perform actual validation of IP addresses, see the {@code InetAddresses#forString(String)}
    * method.
    *
    * @return {@code this}, to enable chaining of calls.
