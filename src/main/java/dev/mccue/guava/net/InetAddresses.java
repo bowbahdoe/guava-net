@@ -16,6 +16,7 @@ package dev.mccue.guava.net;
 
 import static dev.mccue.guava.base.Preconditions.checkArgument;
 import static dev.mccue.guava.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 import dev.mccue.guava.base.CharMatcher;
 import dev.mccue.guava.base.MoreObjects;
@@ -405,7 +406,8 @@ public final class InetAddresses {
     checkNotNull(ip);
     if (ip instanceof Inet4Address) {
       // For IPv4, Java's formatting is good enough.
-      return ip.getHostAddress();
+      // requireNonNull accommodates Android's @RecentlyNullable annotation on getHostAddress
+      return requireNonNull(ip.getHostAddress());
     }
     checkArgument(ip instanceof Inet6Address);
     byte[] bytes = ip.getAddress();
