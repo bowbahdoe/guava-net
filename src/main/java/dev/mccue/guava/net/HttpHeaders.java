@@ -621,6 +621,15 @@ public final class HttpHeaders {
 
   /**
    * The HTTP <a
+   * href="https://w3c.github.io/webappsec-permissions-policy/#permissions-policy-report-only-http-header-field">{@code
+   * Permissions-Policy-Report-Only}</a> header field name.
+   *
+   * @since 33.2.0
+   */
+  public static final String PERMISSIONS_POLICY_REPORT_ONLY = "Permissions-Policy-Report-Only";
+
+  /**
+   * The HTTP <a
    * href="https://wicg.github.io/user-preference-media-features-headers/#sec-ch-prefers-color-scheme">{@code
    * Sec-CH-Prefers-Color-Scheme}</a> header field name.
    *
@@ -865,12 +874,29 @@ public final class HttpHeaders {
 
   /**
    * The HTTP <a
+   * href="https://privacycg.github.io/gpc-spec/#the-sec-gpc-header-field-for-http-requests">{@code
+   * Sec-GPC}</a> header field name.
+   *
+   * @since 33.2.0
+   */
+  public static final String SEC_GPC = "Sec-GPC";
+
+  /**
+   * The HTTP <a
    * href="https://wicg.github.io/turtledove/#handling-direct-from-seller-signals">{@code
    * Ad-Auction-Signals}</a> header field name.
    *
    * @since 33.0.0
    */
   public static final String AD_AUCTION_SIGNALS = "Ad-Auction-Signals";
+
+  /**
+   * The HTTP <a href="https://wicg.github.io/turtledove/#http-headerdef-ad-auction-allowed">{@code
+   * Ad-Auction-Allowed}</a> header field name.
+   *
+   * @since 33.2.0
+   */
+  public static final String AD_AUCTION_ALLOWED = "Ad-Auction-Allowed";
 
   /**
    * The HTTP <a href="https://tools.ietf.org/html/rfc8586">{@code CDN-Loop}</a> header field name.
