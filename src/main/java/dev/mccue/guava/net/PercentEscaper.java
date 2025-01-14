@@ -15,6 +15,7 @@
 package dev.mccue.guava.net;
 
 import static dev.mccue.guava.base.Preconditions.checkNotNull;
+import static java.lang.Math.max;
 
 import dev.mccue.guava.escape.UnicodeEscaper;
 import dev.mccue.jsr305.CheckForNull;
@@ -109,7 +110,7 @@ public final class PercentEscaper extends UnicodeEscaper {
     int maxChar = -1;
     char[] safeCharArray = safeChars.toCharArray();
     for (char c : safeCharArray) {
-      maxChar = Math.max(c, maxChar);
+      maxChar = max(c, maxChar);
     }
     boolean[] octets = new boolean[maxChar + 1];
     for (char c : safeCharArray) {

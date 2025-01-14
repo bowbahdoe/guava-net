@@ -16,10 +16,10 @@ package dev.mccue.guava.net;
 
 import static dev.mccue.guava.base.CharMatcher.ascii;
 import static dev.mccue.guava.base.CharMatcher.javaIsoControl;
-import static dev.mccue.guava.base.Charsets.UTF_8;
 import static dev.mccue.guava.base.Preconditions.checkArgument;
 import static dev.mccue.guava.base.Preconditions.checkNotNull;
 import static dev.mccue.guava.base.Preconditions.checkState;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import dev.mccue.guava.base.Ascii;
 import dev.mccue.guava.base.CharMatcher;
@@ -152,6 +152,15 @@ public final class MediaType {
   public static final MediaType CSV_UTF_8 = createConstantUtf8(TEXT_TYPE, "csv");
   public static final MediaType HTML_UTF_8 = createConstantUtf8(TEXT_TYPE, "html");
   public static final MediaType I_CALENDAR_UTF_8 = createConstantUtf8(TEXT_TYPE, "calendar");
+
+  /**
+   * As described in <a href="https://www.rfc-editor.org/rfc/rfc7763.html">RFC 7763</a>, this
+   * constant ({@code text/markdown}) is used for Markdown documents.
+   *
+   * @since 33.3.0
+   */
+  public static final MediaType MD_UTF_8 = createConstantUtf8(TEXT_TYPE, "markdown");
+
   public static final MediaType PLAIN_TEXT_UTF_8 = createConstantUtf8(TEXT_TYPE, "plain");
 
   /**
@@ -160,6 +169,7 @@ public final class MediaType {
    * may be necessary in certain situations for compatibility.
    */
   public static final MediaType TEXT_JAVASCRIPT_UTF_8 = createConstantUtf8(TEXT_TYPE, "javascript");
+
   /**
    * <a href="http://www.iana.org/assignments/media-types/text/tab-separated-values">Tab separated
    * values</a>.
@@ -394,7 +404,9 @@ public final class MediaType {
   public static final MediaType DART_UTF_8 = createConstantUtf8(APPLICATION_TYPE, "dart");
 
   /**
-   * <a href="https://goo.gl/2QoMvg">Apple Passbook</a>.
+   * <a
+   * href="https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/PassKit_PG/DistributingPasses.html">Apple
+   * Passbook</a>.
    *
    * @since 19.0
    */
@@ -444,6 +456,15 @@ public final class MediaType {
    * @since 14.0
    */
   public static final MediaType APPLICATION_BINARY = createConstant(APPLICATION_TYPE, "binary");
+
+  /**
+   * As described in <a href="https://www.rfc-editor.org/rfc/rfc8949.html">RFC 8949</a>, this
+   * constant ({@code application/cbor}) is used for the Concise Binary Object Representation (CBOR)
+   * data format.
+   *
+   * @since 33.4.0
+   */
+  public static final MediaType CBOR = createConstant(APPLICATION_TYPE, "cbor");
 
   /**
    * Media type for the <a href="https://tools.ietf.org/html/rfc7946">GeoJSON Format</a>, a
@@ -523,29 +544,44 @@ public final class MediaType {
   public static final MediaType MBOX = createConstant(APPLICATION_TYPE, "mbox");
 
   /**
-   * <a href="http://goo.gl/1pGBFm">Apple over-the-air mobile configuration profiles</a>.
+   * <a
+   * href="https://developer.apple.com/library/archive/documentation/NetworkingInternet/Conceptual/iPhoneOTAConfiguration/profile-service/profile-service.html">Apple
+   * over-the-air mobile configuration profiles</a>.
    *
    * @since 18.0
    */
   public static final MediaType APPLE_MOBILE_CONFIG =
       createConstant(APPLICATION_TYPE, "x-apple-aspen-config");
 
-  /** <a href="http://goo.gl/XDQ1h2">Microsoft Excel</a> spreadsheets. */
+  /**
+   * <a
+   * href="https://learn.microsoft.com/en-us/archive/blogs/vsofficedeveloper/office-2007-file-format-mime-types-for-http-content-streaming-2">Microsoft
+   * Excel</a> spreadsheets.
+   */
   public static final MediaType MICROSOFT_EXCEL = createConstant(APPLICATION_TYPE, "vnd.ms-excel");
 
   /**
-   * <a href="http://goo.gl/XrTEqG">Microsoft Outlook</a> items.
+   * <a href="https://www.loc.gov/preservation/digital/formats/fdd/fdd000379.shtml">Microsoft
+   * Outlook</a> items.
    *
    * @since 27.1
    */
   public static final MediaType MICROSOFT_OUTLOOK =
       createConstant(APPLICATION_TYPE, "vnd.ms-outlook");
 
-  /** <a href="http://goo.gl/XDQ1h2">Microsoft Powerpoint</a> presentations. */
+  /**
+   * <a
+   * href="https://learn.microsoft.com/en-us/archive/blogs/vsofficedeveloper/office-2007-file-format-mime-types-for-http-content-streaming-2">Microsoft
+   * Powerpoint</a> presentations.
+   */
   public static final MediaType MICROSOFT_POWERPOINT =
       createConstant(APPLICATION_TYPE, "vnd.ms-powerpoint");
 
-  /** <a href="http://goo.gl/XDQ1h2">Microsoft Word</a> documents. */
+  /**
+   * <a
+   * href="https://learn.microsoft.com/en-us/archive/blogs/vsofficedeveloper/office-2007-file-format-mime-types-for-http-content-streaming-2">Microsoft
+   * Word</a> documents.
+   */
   public static final MediaType MICROSOFT_WORD = createConstant(APPLICATION_TYPE, "msword");
 
   /**
